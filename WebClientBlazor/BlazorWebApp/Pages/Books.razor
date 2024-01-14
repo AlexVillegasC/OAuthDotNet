@@ -1,0 +1,35 @@
+﻿@page "/books"
+@inject HttpClient Http
+
+<PageTitle>Weather</PageTitle>
+
+<h1>Weather</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (books == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Pages</th>                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in books)
+            {
+                <tr>                    
+                    <td>@book.Title</td>
+                    <td>@book.Description</td>
+                    <td>@book.Pages</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

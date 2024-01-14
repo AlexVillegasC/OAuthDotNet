@@ -1,0 +1,14 @@
+﻿@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject NavigationManager Navigation
+
+@code {
+    protected override void OnInitialized()
+    {
+        Navigation.NavigateToLogin("login");
+        // var authenticationProperties = new LoginAuthenticationPropertiesBuilder()
+        //        .WithRedirectUri(returnUrl)
+        //        .Build();
+
+        // await HttpContext.ChallengeAsync(Auth0Constants.AuthenticationScheme, authenticationProperties);
+    }
+}

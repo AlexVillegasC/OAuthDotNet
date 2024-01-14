@@ -1,0 +1,15 @@
+﻿@model SampleMvcApp.ViewModels.BooksModel
+
+@{
+    ViewData["Title"] = "Books";
+}
+
+<h1>Books</h1>
+
+<div>
+    <h2>@Model.Title</h2>
+    <p>@Model.Description</p>    
+    <p>Pages: @Model.Pages</p>
+    <p>Author: @Model.Author.FirstName @Model.Author.LastName</p>
+    <p>Category: @Model.Category.Name</p>
+</div>
