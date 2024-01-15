@@ -1,29 +1,66 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
-
+﻿using Client.WebApp.Services.MessageHandler;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+using System.Net.Http.Headers;
 
 namespace WebApp.Services.MessageHandler;
 
-public class CustomAuthorizationMessageHandler : AuthorizationMessageHandler
+public class CustomAuthorizationMessageHandler : DelegatingHandler// AuthorizationMessageHandler
 {
-    public CustomAuthorizationMessageHandler(IAccessTokenProvider accessTokenProvider, NavigationManager navigationManager, IConfiguration configuration)
-        // IConfiguration is injected to read from appsettings
-        : base(accessTokenProvider, navigationManager)
-    {
-        // Example: Reading from configuration
-        var apiBaseUrl = configuration["ApiSettings:BaseUrl"]; // Adjust the key as per your config
-        var scopes = configuration.GetSection("ApiSettings:Scopes").Get<string[]>();
+    private readonly ITokenProviderService _authService;
 
-        // Configuring the handler with the API base URL and scopes
-        //ConfigureHandler(
-        //    authorizedUrls: new[] { apiBaseUrl },
-        //    scopes: scopes,
-        //    returnUrl: apiBaseUrl
-        //    );
+
+    public CustomAuthorizationMessageHandler(ITokenProviderService authService)
+    {
+        _authService = authService;        
+    }
+
+    protected override async Task<HttpResponseMessage> SendAsync(
+    HttpRequestMessage request, CancellationToken cancellationToken)
+    {        
+        // Call the authentication service to get an access token
+        var accessToken = await _authService.GetAccessTokenAsync(cancellationToken);
+
+        // Set the authorization header with the access token
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        return await base.SendAsync(request, cancellationToken);
     }
 }
 
+//protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+//{
+//    var requestUrl = request.RequestUri.AbsoluteUri;
 
+//    if (_authorizedUrls.Any(url => requestUrl.StartsWith(url)))
+//    {
+//        //var tokenResult = await _accessTokenProvider.RequestAccessToken(new AccessTokenRequestOptions { Scopes = _scopes.ToArray() });
+//        var tokenResult = await _accessTokenProvider.RequestAccessToken();
+
+//        if (tokenResult.TryGetToken(out var token))
+//        {
+//            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.Value);
+//        }
+//    }
+
+//    return await base.SendAsync(request, cancellationToken);
+//}
+
+
+//public CustomAuthorizationMessageHandler(IAccessTokenProvider accessTokenProvider, NavigationManager navigationManager, IConfiguration configuration)
+//    // IConfiguration is injected to read from appsettings
+//    : base(accessTokenProvider, navigationManager)
+//{
+//    // Example: Reading from configuration
+//    var apiBaseUrl = configuration["ApiSettings:BaseUrl"]; // Adjust the key as per your config
+//    var scopes = configuration.GetSection("ApiSettings:Scopes").Get<string[]>();
+
+//    // Configuring the handler with the API base URL and scopes
+//    //ConfigureHandler(
+//    //    authorizedUrls: new[] { apiBaseUrl },
+//    //    scopes: scopes,
+//    //    returnUrl: apiBaseUrl
+//    //    );
+//}
 
 //protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
 //{

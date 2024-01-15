@@ -40,7 +40,7 @@ public class BooksService : IBooksService
         try
         {
             // Your API call logic here
-            HttpResponseMessage response = await _httpClient.GetAsync("https://labcibe-books-api-dev.azurewebsites.net/api/Book");
+            HttpResponseMessage response = await _httpClient.GetAsync("api/Book");
 
             if (response.IsSuccessStatusCode)
             {
